@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Solve Me ❤️</title>
+
+<style>
+body {
+    margin: 0;
+    height: 100vh;
+    background: linear-gradient(135deg, #ffe6f0, #ffccdd);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Segoe UI', sans-serif;
+    overflow: hidden;
+}
+
+/* 💎 Container */
+.container {
+    background: rgba(255,255,255,0.2);
+    padding: 20px;
+    border-radius: 25px;
+    backdrop-filter: blur(10px);
+    text-align: center;
+}
+
+h2 {
+    color: #ff3385;
+    text-shadow: 0 0 10px #ff99cc;
+}
+
+#info {
+    font-size: 14px;
+    color: #444;
+}
+
+/* 🧩 Puzzle */
+#puzzle {
+    width: 300px;
+    height: 300px;
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 4px;
+    margin-top: 10px;
+}
+
+.tile {
+    width: 100px;
+    height: 100px;
+    background-image: url('photo.jpg');
+    background-size: 300px 300px;
+    border-radius: 10px;
+    cursor: grab;
+    transition: 0.3s;
+}
+
+/* 🧠 Correct glow */
+.correct {
+    box-shadow: 0 0 15px #00ffcc;
+}
+
+/* 💖 Hearts */
+.heart {
+    position: fixed;
+    bottom: -20px;
+    animation: float 6s linear infinite;
+    font-size: 20px;
+}
+
+@keyframes float {
+    100% { transform: translateY(-800px); opacity: 0; }
+}
+
+/* 🖼️ Preview */
+#preview {
+    position: fixed;
+    width: 300px;
+    height: 300px;
+    background: url('photo.jpg');
+    background-size: cover;
+    border-radius: 20px;
+    z-index: 10;
+}
+
+/* 🎉 Confetti */
+.confetti {
+    position: fixed;
+    width: 10px;
+    height: 10px;
+    animation: fall 3s linear forwards;
+}
+
+@keyframes fall {
+    to { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+}
+</style>
+
+</head>
+
+<body>
+
+<div id="preview"></div>
+
+<div class="container">
+
+<h2>🧩 Complete our memory ❤️</h2>
+<p id="info">Moves: 0 | Time: 0s</p>
+<p id="msg">Start solving my love 😘</p>
+
+<div id="puzzle"></div>
+
+</div>
+
+<audio autoplay loop>
+  <source src="music.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+let order=[0,1,2,3,4,5,6,7,8].sort(()=>Math.random()-0.5);
+let moves=0, time=0;
+let dragIndex=null;
+
+const puzzle=document.getElementById("puzzle");
+
+/* 🖼️ Preview 2 sec */
+setTimeout(()=>{
+    document.getElementById("preview").style.display="none";
+},2000);
+
+/* ⏱️ Timer */
+setInterval(()=>{
+    time++;
+    updateInfo();
+},1000);
+
+function updateInfo(){
+    document.getElementById("info").innerText=
+    `Moves: ${moves} | Time: ${time}s`;
+}
+
+/* 💬 Messages */
+function updateMessage(){
+    let msg=document.getElementById("msg");
+
+    if(moves<5) msg.innerText="Easy for you 😍";
+    else if(moves<10) msg.innerText="You're doing great baby 💖";
+    else msg.innerText="Almost there 😘 don't give up!";
+}
+
+/* 🧩 Draw Puzzle */
+function draw(){
+    puzzle.innerHTML="";
+    order.forEach((n,i)=>{
+        let d=document.createElement("div");
+        d.className="tile";
+        d.draggable=true;
+
+        d.style.backgroundPosition=
+        `${-(n%3)*100}px ${-Math.floor(n/3)*100}px`;
+
+        /* 🧠 Correct position glow */
+        if(n===i) d.classList.add("correct");
+
+        d.ondragstart=()=>dragIndex=i;
+        d.ondragover=e=>e.preventDefault();
+        d.ondrop=()=>swap(i);
+
+        puzzle.appendChild(d);
+    });
+}
+
+/* 🎮 Swap tiles */
+function swap(i){
+    [order[dragIndex],order[i]]=[order[i],order[dragIndex]];
+    moves++;
+    updateInfo();
+    updateMessage();
+    draw();
+    check();
+}
+
+/* ✅ Check win */
+function check(){
+    if(order.every((v,i)=>v===i)){
+        document.getElementById("msg").innerText="You did it my love 😍❤️";
+        celebrate();
+        setTimeout(()=>{
+            window.location.href="sorry.html";
+        },2500);
+    }
+}
+
+/* 🎉 Confetti */
+function celebrate(){
+    for(let i=0;i<100;i++){
+        let c=document.createElement("div");
+        c.className="confetti";
+        c.style.left=Math.random()*100+"vw";
+        c.style.background=`hsl(${Math.random()*360},100%,50%)`;
+        document.body.appendChild(c);
+        setTimeout(()=>c.remove(),3000);
+    }
+}
+
+/* ❤️ Hearts */
+setInterval(()=>{
+    let h=document.createElement("div");
+    h.className="heart";
+    h.innerHTML="❤️";
+    h.style.left=Math.random()*100+"vw";
+    document.body.appendChild(h);
+    setTimeout(()=>h.remove(),6000);
+},400);
+
+draw();
+</script>
+
+</body>
+</html>

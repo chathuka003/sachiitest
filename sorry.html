@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Love Quiz ❤️</title>
+
+<style>
+    body {
+        margin: 0;
+        height: 100vh;
+        background: linear-gradient(135deg, #ffe6f0, #ffccdd);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        overflow: hidden;
+    }
+
+    .container {
+        width: 90%;
+        max-width: 400px;
+        background: rgba(255,255,255,0.4);
+        backdrop-filter: blur(15px);
+        padding: 30px;
+        border-radius: 25px;
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        border: 1px solid rgba(255,255,255,0.3);
+        transition: opacity 1s ease;
+    }
+
+    h2 { color: #ff3385; text-shadow: 0 0 10px #ff99cc; margin-top: 0; }
+    #question { font-size: 20px; margin: 20px 0; font-weight: bold; color: #444; }
+
+    .option {
+        display: block;
+        margin: 10px auto;
+        padding: 15px;
+        border: none;
+        border-radius: 25px;
+        background: white;
+        color: #ff3385;
+        font-weight: bold;
+        cursor: pointer;
+        width: 80%;
+        transition: 0.3s;
+        box-shadow: 0 4px 15px rgba(255, 77, 136, 0.2);
+    }
+
+    .option:hover { transform: scale(1.05); background: #ff4d88; color: white; }
+    #msg { margin-top: 15px; height: 20px; font-weight: bold; color: #ff1a66; }
+    #progress { font-size: 12px; color: #888; text-transform: uppercase; letter-spacing: 1px; }
+    
+    #final, #bye-screen { display: none; }
+
+    /* 👋 Bye Chutiii Animation */
+    .bye-text {
+        font-size: 40px;
+        font-weight: bold;
+        color: #ff3385;
+        animation: pop-bounce 1s infinite alternate ease-in-out;
+    }
+
+    @keyframes pop-bounce {
+        0% { transform: scale(1) rotate(-5deg); }
+        100% { transform: scale(1.2) rotate(5deg); }
+    }
+
+    /* Floating Animations */
+    .heart { position: fixed; bottom: -20px; animation: float 6s linear infinite; font-size: 20px; z-index: -1; }
+    @keyframes float { 100% { transform: translateY(-110vh) rotate(360deg); opacity: 0; } }
+    
+    .sparkle { position: fixed; animation: sparkle 2s linear infinite; z-index: -1; }
+    @keyframes sparkle { 0%, 100% { opacity: 0; } 50% { opacity: 1; transform: scale(1.2); } }
+    
+    @keyframes fall { to { transform: translateY(100vh) rotate(720deg); } }
+</style>
+
+</head>
+<body>
+
+<div class="container" id="main-card">
+    <div id="quiz">
+        <h2>💖 Love Quiz 💖</h2>
+        <p id="progress"></p>
+        <p id="question"></p>
+        <button class="option" onclick="checkAnswer('You')">You</button>
+        <button class="option" onclick="checkAnswer('Me')">Me</button>
+        <p id="msg"></p>
+    </div>
+
+    <div id="final">
+        <h2>🎉 Yay! Finished! 😍</h2>
+        <p style="font-size:18px;">See? I knew we'd get there! ❤️</p>
+        <p>No matter what... I'll always choose you. 💖</p>
+    </div>
+
+    <div id="bye-screen">
+        <p class="bye-text">That's it...</p>
+        <p class="bye-text">Bye Chutiii! 😜👋</p>
+    </div>
+</div>
+
+<script>
+let q = 0;
+
+const quizData = [
+    { q: "Who loves you the most? 😏", correct: "You", msg: "Correct answer! 😌❤️" },
+    { q: "Who is the cutest? 😍", correct: "Me", msg: "Obviously You! 😍" },
+    { q: "Who is always wrong? 😂", correct: "You", msg: "You better admit it! 😂" },
+    { q: "Who misses you every second? 🥺", correct: "You", msg: "Aww, but honestly... we both do. 🥺❤️" },
+    { q: "Who will never leave you? ❤️", correct: "You", msg: "Correct! But I'm never leaving either. 💖" }
+];
+
+function load() {
+    if (q < quizData.length) {
+        document.getElementById("question").innerText = quizData[q].q;
+        document.getElementById("progress").innerText = `Question ${q + 1} of ${quizData.length}`;
+    } else {
+        showFinal();
+    }
+}
+
+function checkAnswer(choice) {
+    const feedback = document.getElementById("msg");
+    if (choice === quizData[q].correct) {
+        feedback.innerText = quizData[q].msg;
+        feedback.style.color = "#ff1a66";
+        q++;
+        setTimeout(() => {
+            feedback.innerText = "";
+            load();
+        }, 1500);
+    } else {
+        feedback.innerText = "Try again! 😜";
+        feedback.style.color = "#888";
+    }
+}
+
+function showFinal() {
+    document.getElementById("quiz").style.display = "none";
+    document.getElementById("final").style.display = "block";
+    celebrate();
+    
+    // After 4 seconds of celebration, show the bye screen
+    setTimeout(() => {
+        document.getElementById("final").style.display = "none";
+        document.getElementById("bye-screen").style.display = "block";
+        
+        // Final fade out of the whole card for extra drama
+        setTimeout(() => {
+            document.getElementById("main-card").style.opacity = "0.9";
+        }, 2000);
+    }, 4000);
+}
+
+function celebrate() {
+    for (let i = 0; i < 50; i++) {
+        let c = document.createElement("div");
+        c.style.position = "fixed";
+        c.style.width = "8px";
+        c.style.height = "8px";
+        c.style.left = Math.random() * 100 + "vw";
+        c.style.top = "-10px";
+        c.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
+        c.style.borderRadius = "50%";
+        c.style.animation = "fall 3s linear forwards";
+        document.body.appendChild(c);
+        setTimeout(() => c.remove(), 3000);
+    }
+}
+
+// Hearts Background
+setInterval(() => {
+    let h = document.createElement("div");
+    h.className = "heart";
+    h.innerHTML = "❤️";
+    h.style.left = Math.random() * 100 + "vw";
+    document.body.appendChild(h);
+    setTimeout(() => h.remove(), 6000);
+}, 500);
+
+load();
+</script>
+
+</body>
+</html>
